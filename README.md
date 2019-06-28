@@ -1,1 +1,1 @@
-# userscripts
+These are small userscripts I've written, to provide miscellaneous tweaks to websites. To be installed using an extension such as [Tampermonkey](https://www.tampermonkey.net/).
