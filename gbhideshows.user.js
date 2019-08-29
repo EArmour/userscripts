@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Giant Bomb: Hide 'In This Episode' list
 // @namespace    http://bifrost.me/
-// @version      1.1
+// @version      1.2
 // @description  Hide the list of games played in GB videos by default. Everyone likes surprises!
 // @match        https://www.giantbomb.com/shows/*
 // @grant        none
 // ==/UserScript==
 
-var showString = '+ Show';
-var hideString = '- Hide';
+const showString = '+ Show';
+const hideString = '- Hide';
 
 var showTitle = '';
 var targetParent = null;
@@ -27,7 +27,6 @@ function titleWatcher() {
     setTimeout(function(){titleWatcher();}, 2000);
 }
 
-
 function addToggle() {
     targetParent = document.querySelector('div.episode-details');
     // Some older videos don't have the "In This Episode" section, exit script
@@ -35,8 +34,14 @@ function addToggle() {
         return;
     }
 
-    // This is first game in the list, before which the new toggle element will be inserted
-    var targetElement = document.querySelector('div.episode-details > p.text-large ~ p.text-small');
+    // Get list of "In This Episode" games, don't bother hiding if there's only one
+    var gameList = document.querySelectorAll('div.episode-details > p.text-large ~ p.text-small');
+    if (gameList.length < 2) {
+        return;
+    }
+
+    // The new toggle element will be inserted before the first item in the list
+    var targetElement = gameList[0];
 
     // Create element that will be clicked to toggle the list on/off
     var toggle = document.createElement('div');
