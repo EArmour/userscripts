@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Giant Bomb: Hide 'In This Episode' list
 // @namespace    http://bifrost.me/
-// @version      1.2
+// @version      1.3
 // @description  Hide the list of games played in GB videos by default. Everyone likes surprises!
 // @match        https://www.giantbomb.com/shows/*
 // @grant        none
@@ -18,7 +18,7 @@ titleWatcher();
 // Selecting another episode of the same show doesn't trigger a full page reload,
 // so we monitor the episode title and trigger adding the toggle when it changes
 function titleWatcher() {
-    var currentTitle = document.querySelector('div.episode-topslot-content-text > h1').textContent;
+    var currentTitle = document.title;
 
     if (currentTitle !== showTitle) {
         addToggle();
