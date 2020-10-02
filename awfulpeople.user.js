@@ -84,7 +84,7 @@ $(window).on('load', function(){
     }
 
     function replaceLabel(poster) {
-        for (var i = 0; i < names.length; i++) {
+        for (let i = 0; i < names.length; i++) {
             if (names[i] == poster) {
                 names.splice(i,1);
                 labels.splice(i,1);

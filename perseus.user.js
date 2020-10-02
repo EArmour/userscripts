@@ -1,34 +1,32 @@
 // ==UserScript==
 // @name            Perseus Hover Footnotes
-// @namespace       http://bifrost.me
-// @version         1.0
+// @namespace       https://bifrost.me
+// @version         1.1
 // @description	    Allows you to hover your mouse over footnotes and see the text immediately.
-// @include         http://www.perseus.tufts.edu/hopper/text?*
-// @grant           none
+// @include         https://www.perseus.tufts.edu/hopper/text?*
+// @grant           GM_addStyle
 // ==/UserScript==
 
 (function() {
     // Hide footer junk
-    style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = ".rights_info {display: none;}";
-    document.getElementsByTagName('head')[0].appendChild(style);
-    
+	GM_addStyle('.rights_info {display: none;} '
+	    + '.footnotes {border-top: 2px solid black;}');
+
     // Remove internal section numbers that break up the text
     var sectionNumbers = document.getElementsByClassName('english');
     var len = sectionNumbers.length;
-    for(var i=0; i < len; i++) {
-        var number = sectionNumbers[0];
+    for(let i=0; i < len; i++) {
+        let number = sectionNumbers[0];
         number.parentNode.removeChild(number);
     }
     var mainText = document.getElementById('text_main');
     mainText.innerHTML = mainText.innerHTML.replace(/\[\]/g, '');
-    
+
     // Add footnote hovers
     var sups = document.getElementsByTagName('sup');
     var footnotehtml = [];
     window.footnoteinuse = false;
-    for(var i=0; i<sups.length; i++) {
+    for(let i=0; i<sups.length; i++) {
         var sup = sups[i].parentNode;
         if(sup['id']) {
             var notenum = sup.hash.substr(1);
@@ -39,7 +37,7 @@
             sup.childNodes[0].textContent = '[' + (i + 1) + ']';
             sup.setAttribute('footnoteindex', i);
             sup.addEventListener('mouseover',
-               function(event) {
+                function(event) {
                     window.footnoteinuse = false;
                     var footnotepopup = document.getElementById('footnotepopup');
                     if(footnotepopup) footnotepopup.parentNode.removeChild(footnotepopup);
@@ -58,7 +56,7 @@
                     popup.style.border = 'thin solid';
                     popup.style.padding = '5px';
                     popup.style.zIndex = '99';
-                    popup.className = 'secondary';
+                    popup.style.fontSize = 'x-small';
 
                     popup.addEventListener('mouseover', function(event){
                         window.footnoteinuse = true;
@@ -74,7 +72,7 @@
                             }
                         }, 150);
                     }, true);
-                
+
                     document.body.appendChild(popup);
                     var footnotepopup2 = document.getElementById('footnotepopup');
             }, true);
