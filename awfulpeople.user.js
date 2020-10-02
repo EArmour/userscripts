@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name           AwfulPeople
-// @namespace      http://bifrost.me
-// @version        1.1
+// @namespace      https://bifrost.me
+// @version        1.2
 // @description    Tagging users on the Something Awful forums
-// @icon           http://i.imgur.com/umzk8d9.png
+// @icon           https://i.imgur.com/umzk8d9.png
 // @include        https://forums.somethingawful.com/showthread.php*
 // @grant          GM_addStyle
-// @require		   http://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js
+// @require        https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js
 // ==/UserScript==
+
+var names, labels;
 
 //Dummy labels to populate localstorage on first run
 if(localStorage.getItem('apFirstRun') != '1') {
@@ -24,7 +26,7 @@ if(localStorage.getItem('apFirstRun') == '1') {
     labels = JSON.parse(localStorage.getItem('labels'));
 }
 
-$(window).load(function(){
+$(window).on('load', function(){
     GM_addStyle('span.apLabel {color: green; background: black;} ' +
             '.apBtn {cursor: pointer; width: 12px;} ' +
             '.bbc-block blockquote {color: black;}');
@@ -38,8 +40,7 @@ $(window).load(function(){
         var poster = $(this).text();
 
         var labelBtn = document.createElement("img");
-
-        genBtn();
+        genBtn(labelBtn);
 
         $(labelBtn).appendTo(usrBtns[u]);
         u = u + 1;
@@ -49,45 +50,45 @@ $(window).load(function(){
                 $('<span class="apLabel">' + labels[i] + '</span>').insertAfter(this);
             }
         }
-
-        function genBtn() {
-            labelBtn.setAttribute('src', 'http://i.imgur.com/umzk8d9.png');
-            labelBtn.setAttribute('class','apBtn');
-            labelBtn.setAttribute('title', 'Add user label');
-            labelBtn.setAttribute('id','ap' + u);
-            labelBtn.addEventListener('click', addLabel, false);
-        }
-
-        function addLabel() {
-            //Get user that you're labeling (this is probably terrible)
-            var user = $('.author').eq($(this).attr('id').slice(2));
-            var userName = user.text();
-            var newLabel = prompt("Enter label for " + userName + ": (OK with no text to delete existing)");
-
-            if(newLabel !== null) {
-                replaceLabel(userName);
-
-                //Add new name/label pair and update localstorage
-                if(newLabel !== "") {
-                    names.push(userName);
-                    labels.push(newLabel);
-                }
-                localStorage.setItem('names',JSON.stringify(names));
-                localStorage.setItem('labels',JSON.stringify(labels));
-
-                //Remove any old label and add new
-                $(user).siblings('.apLabel').remove();
-                $('<span class="apLabel">' + newLabel + '</span>').insertAfter(user);
-            }
-        }
-
-        function replaceLabel(poster) {
-            for (i = 0; i < names.length; i++) {
-                if (names[i] == poster) {
-                    names.splice(i,1);
-                    labels.splice(i,1);
-                }
-            }
-        }
     });
+
+    function genBtn(btnElement) {
+        btnElement.setAttribute('src', 'https://i.imgur.com/umzk8d9.png');
+        btnElement.setAttribute('class','apBtn');
+        btnElement.setAttribute('title', 'Add user label');
+        btnElement.setAttribute('id','ap' + u);
+        btnElement.addEventListener('click', addLabel, false);
+    }
+
+    function addLabel() {
+        //Get user that you're labeling (this is probably terrible)
+        var user = $('.author').eq($(this).attr('id').slice(2));
+        var userName = user.text();
+        var newLabel = prompt("Enter label for " + userName + ": (OK with no text to delete existing)");
+
+        if(newLabel !== null) {
+            replaceLabel(userName);
+
+            //Add new name/label pair and update localstorage
+            if(newLabel !== "") {
+                names.push(userName);
+                labels.push(newLabel);
+            }
+            localStorage.setItem('names',JSON.stringify(names));
+            localStorage.setItem('labels',JSON.stringify(labels));
+
+            //Remove any old label and add new
+            $(user).siblings('.apLabel').remove();
+            $('<span class="apLabel">' + newLabel + '</span>').insertAfter(user);
+        }
+    }
+
+    function replaceLabel(poster) {
+        for (var i = 0; i < names.length; i++) {
+            if (names[i] == poster) {
+                names.splice(i,1);
+                labels.splice(i,1);
+            }
+        }
+    }
 });
